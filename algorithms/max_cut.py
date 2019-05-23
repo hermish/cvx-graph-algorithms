@@ -1,7 +1,8 @@
 import numpy as np
+import cvxpy as cvx
 import networkx as nx
 
-WEIGHT = 'weight'
+from structures.cut import Cut
 
 
 def greedy_max_cut(graph):
@@ -13,20 +14,20 @@ def greedy_max_cut(graph):
     :param graph: (NetworkX graph) An undirected graph with no self-loops or
         multiple edges. The graph can either be weighted or unweighted, where
         each edge present is assigned an equal weight of 1.
-    :return: (tuple of two sets) The cut returned by the algorithm as two
+    :return: (structures.Cut) The cut returned by the algorithm as two
         sets, where each corresponds to a different side of the cut. Together,
-        both lists contain all vertices in the graph, and each vertex is in
-        exactly one of the two lists.
+        both sets contain all vertices in the graph, and each vertex is in
+        exactly one of the two sets.
     """
-    left, right = set(), set()
+    cut = Cut(set(), set())
     for vertex in graph.nodes():
-        left_neighbors = sum(adj in left for adj in graph.neighbors(vertex))
-        right_neighbors = sum(adj in right for adj in graph.neighbors(vertex))
-        if left_neighbors < right_neighbors:
-            left.add(vertex)
+        l_neighbors = sum((adj in cut.left) for adj in graph.neighbors(vertex))
+        r_neighbors = sum((adj in cut.right) for adj in graph.neighbors(vertex))
+        if l_neighbors < r_neighbors:
+            cut.left.add(vertex)
         else:
-            right.add(vertex)
-    return left, right
+            cut.right.add(vertex)
+    return cut
 
 
 def random_cut(graph, probability):
@@ -34,7 +35,7 @@ def random_cut(graph, probability):
     :param graph: (graph) A NetworkX graph.
     :param probability: (float) A number in [0, 1] which gives the probability
         each vertex lies on the right side of the cut.
-    :return: (tuple of two sets) The random cut which results from randomly
+    :return: (structures.Cut) The random cut which results from randomly
         assigning vertices to either side independently at random according
         to the probability given above.
     """
@@ -44,45 +45,70 @@ def random_cut(graph, probability):
     nodes = list(graph.nodes())
     left = {vertex for side, vertex in zip(sides, nodes) if side == 0}
     right = {vertex for side, vertex in zip(sides, nodes) if side == 1}
-    return left, right
+    return Cut(left, right)
 
 
-def evaluate_cut(graph, left, right):
+def goemans_williamson_weighted(graph):
     """
-    :param graph: (graph) A NetworkX graph.
-    :param left: (set) Vertices on the left side of the cut.
-    :param right: (set) Vertices on the right side of the cut.
-    :return: (number) Returns the size of the cut, or more precisely, the sum
-        of the weights of the edges between right and left. When the graph is
-        unweighted, edge weights are taken to be 1, so this counts the total
-        edges between sides of the cute.
+    Runs the Goemans-Williamson randomized 0.87856-approximation algorithm for
+    MAX-CUT on the graph instance, returning the cut.
+
+    :param graph: (NetworkX graph) An undirected graph with no self-loops or
+        multiple edges. The graph can either be weighted or unweighted, where
+        each edge present is assigned an equal weight of 1.
+    :return: (structures.Cut) The cut returned by the algorithm as two
+        sets, where each corresponds to a different side of the cut. Together,
+        both sets contain all vertices in the graph, and each vertex is in
+        exactly one of the two sets.
     """
-    _validate_cut(graph, left, right)
-    graph_weighted = nx.is_weighted(graph)
-    total, weight = 0, 1
+    adjacency = nx.linalg.adjacency_matrix(graph)
+    adjacency = adjacency.toarray()
+    solution = _solve_cut_vector_program(adjacency)
+    sides = _recover_cut(solution)
 
-    for edge in graph.edges():
-        start, end = edge
-        forward_order = start in left and end in right
-        reverse_order = start in right and end in left
-        if forward_order or reverse_order:
-            if graph_weighted:
-                weight = graph[start][end][WEIGHT]
-            total += weight
-    return total
+    nodes = list(graph.nodes())
+    left = {vertex for side, vertex in zip(sides, nodes) if side < 0}
+    right = {vertex for side, vertex in zip(sides, nodes) if side >= 0}
+    return Cut(left, right)
 
 
-def _validate_cut(graph, left, right):
+def _solve_cut_vector_program(adjacency):
     """
-    :param graph: (graph) A NetworkX graph.
-    :param left: (set) Vertices on the left side of the cut.
-    :param right: (set) Vertices on the right side of the cut.
-    :return: (none) Ensures the left and right compose a valid cut of the graph
-        so each vertex in the graph is in exactly one of these two sets.
+    :param adjacency: (matrix) A square matrix representing the adjacency matrix
+        of an undirected graph with no self-loops. Therefore, the matrix must be
+        symmetric with zeros along its diagonal.
+    :return: (matrix) A matrix whose columns represents the vectors assigned to
+        each vertex to maximize the MAX-CUT semi-definite program (SDP)
+        objective.
     """
-    size = len(graph)
-    left_size, right_size = len(left), len(right)
-    assert left_size + right_size == size
+    size = len(adjacency)
+    ones_matrix = np.ones((size, size))
+    products = cvx.Variable((size, size), PSD=True)
+    cut_size = 0.5 * cvx.sum(cvx.multiply(adjacency, ones_matrix - products))
 
-    for vertex in graph.nodes():
-        assert vertex in left or vertex in right
+    objective = cvx.Maximize(cut_size)
+    constraints = [cvx.diag(products) == 1]
+    problem = cvx.Problem(objective, constraints)
+    problem.solve()
+
+    eigenvalues, eigenvectors = np.linalg.eigh(products.value)
+    eigenvalues = np.maximum(eigenvalues, 0)
+    diagonal_root = np.diag(np.sqrt(eigenvalues))
+    assignment = diagonal_root @ eigenvectors.T
+    return assignment
+
+
+def _recover_cut(solution):
+    """
+    :param solution: (matrix) A vector assignment of vertices, where each
+        SOLUTION[:,i] corresponds to the vector associated with vertex i.
+    :return: (array) The cut from probabilistically rounding the
+        solution, where -1 signifies left, +1 right, and 0 (which occurs almost
+        surely never) either.
+    """
+    size = len(solution)
+    partition = np.random.normal(size=size)
+    projections = solution.T @ partition
+
+    sides = np.sign(projections)
+    return sides

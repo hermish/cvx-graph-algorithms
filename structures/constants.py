@@ -1,0 +1,1 @@
+WEIGHT = 'weight'
