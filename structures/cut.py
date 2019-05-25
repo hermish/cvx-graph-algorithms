@@ -1,6 +1,7 @@
+import itertools
 import networkx as nx
 
-from structures.constants import WEIGHT
+from structures.attributes import WEIGHT
 
 
 class Cut:
@@ -18,6 +19,8 @@ class Cut:
         """
         self.left = left
         self.right = right
+        self.vertices = list(itertools.chain(left, right))
+
 
     def validate_cut(self, graph):
         """

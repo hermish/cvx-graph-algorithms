@@ -14,7 +14,7 @@ def greedy_max_cut(graph):
     :param graph: (NetworkX graph) An undirected graph with no self-loops or
         multiple edges. The graph can either be weighted or unweighted, where
         each edge present is assigned an equal weight of 1.
-    :return: (structures.Cut) The cut returned by the algorithm as two
+    :return: (structures.cut.Cut) The cut returned by the algorithm as two
         sets, where each corresponds to a different side of the cut. Together,
         both sets contain all vertices in the graph, and each vertex is in
         exactly one of the two sets.
@@ -35,7 +35,7 @@ def random_cut(graph, probability):
     :param graph: (graph) A NetworkX graph.
     :param probability: (float) A number in [0, 1] which gives the probability
         each vertex lies on the right side of the cut.
-    :return: (structures.Cut) The random cut which results from randomly
+    :return: (structures.cut.Cut) The random cut which results from randomly
         assigning vertices to either side independently at random according
         to the probability given above.
     """
@@ -56,7 +56,7 @@ def goemans_williamson_weighted(graph):
     :param graph: (NetworkX graph) An undirected graph with no self-loops or
         multiple edges. The graph can either be weighted or unweighted, where
         each edge present is assigned an equal weight of 1.
-    :return: (structures.Cut) The cut returned by the algorithm as two
+    :return: (structures.cut.Cut) The cut returned by the algorithm as two
         sets, where each corresponds to a different side of the cut. Together,
         both sets contain all vertices in the graph, and each vertex is in
         exactly one of the two sets.
