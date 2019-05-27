@@ -21,12 +21,12 @@ class Cut:
         self.right = right
         self.vertices = list(itertools.chain(left, right))
 
-
     def validate_cut(self, graph):
         """
-        :param graph: (graph) A NetworkX graph.
-        :return: (none) Ensures the left and right compose a valid cut of the
-            graph so each vertex in the graph is in exactly one of these two sets.
+        :param graph: (nx.classes.graph.Graph) A NetworkX graph.
+        :return: (NoneType) Ensures the left and right compose a valid cut of
+            the graph so each vertex in the graph is in exactly one of these two
+            sets.
         """
         size = len(graph)
         left_size, right_size = len(self.left), len(self.right)
@@ -37,9 +37,9 @@ class Cut:
 
     def evaluate_cut_size(self, graph):
         """
-        :param graph: (graph) A NetworkX graph.
-        :return: (number) Returns the size of the cut, or more precisely, the
-            sum of the weights of the edges between right and left. When the
+        :param graph: (nx.classes.graph.Graph) A NetworkX graph.
+        :return: (float | int) Returns the size of the cut, or more precisely
+            the sum of the weights of the edges between right and left. When the
             graph is unweighted, edge weights are taken to be 1, so this counts
             the total edges between sides of the cut.
         """

@@ -2,8 +2,6 @@ import random
 import itertools
 import networkx as nx
 
-# from structures.cut import Cut
-
 
 def stochastic_block_on_cut(cut, within, between):
     """
@@ -16,11 +14,11 @@ def stochastic_block_on_cut(cut, within, between):
         each of the two communities. Traditionally, the size of each side is
         exactly half the total number of vertices in the graph, denoted n.
     :param within: (float) The probability an edge exists between two vertices
-        in the same community, denoted p.
+        in the same community, denoted p. Must be between 0 and 1 inclusive.
     :param between: (float) The probability of each edge between two vertices
-        in different communities, denoted q.
-    :return: (NetworkX graph) A graph drawn according to the Stochastic Block
-        Model over the cut.
+        in different communities, denoted q. Must be between 0 and 1 inclusive.
+    :return: (nx.classes.graph.Graph) A graph drawn according to the Stochastic
+        Block Model over the cut.
     """
     graph = nx.Graph()
     graph.add_nodes_from(cut.vertices)
