@@ -1,7 +1,7 @@
 import itertools
 import networkx as nx
 
-from structures.attributes import WEIGHT
+WEIGHT = 'weight'
 
 
 class Cut:

@@ -1,6 +1,8 @@
+import itertools
 import numpy as np
 import cvxpy as cp
 import networkx as nx
+from scipy import linalg
 
 
 def greedy_independent_set(graph):
@@ -93,3 +95,33 @@ def _get_vector_clusters(labels, vectors, threshold):
                 output.add(labels[other])
         clusters.append(output)
     return clusters
+
+
+def planted_spectral_algorithm(graph):
+    """
+    :param graph: (nx.classes.graph.Graph) An undirected graph with no
+        self-loops or multiple edges. The graph can either be weighted or
+        unweighted, although the problem only differentiates between zero and
+        non-zero weight edges.
+    :return: (set) The independent set the algorithm outputs, represented as
+        a set of vertices.
+    """
+    size = len(graph)
+    labels = list(graph.nodes)
+    adjacency = nx.linalg.adjacency_matrix(graph)
+    adjacency = adjacency.toarray()
+    co_adjacency = 1 - adjacency
+
+    ones_matrix = np.ones((size, size))
+    normalized = co_adjacency - 0.5 * ones_matrix
+    _, eigenvector = linalg.eigh(normalized, eigvals=(size - 1, size - 1))
+
+    indices = list(range(size))
+    indices.sort(key=lambda num: eigenvector[num], reverse=True)
+
+    output = set()
+    for index in indices:
+        vertex = labels[index]
+        if not any(graph.has_edge(vertex, element) for element in output):
+            output.add(vertex)
+    return output
