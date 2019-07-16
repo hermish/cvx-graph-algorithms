@@ -1,4 +1,4 @@
-# Convex Graph Algorithms
+# CVX Graph Algorithms
 
 ## Introduction
 
