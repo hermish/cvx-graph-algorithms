@@ -11,9 +11,7 @@ setuptools.setup(
         'numpy',
         'scipy',
         'cvxpy',
-        'networkx',
-        'itertools',
-        'random'
+        'networkx'
     ],
 
     author='Hermish Mehta',
