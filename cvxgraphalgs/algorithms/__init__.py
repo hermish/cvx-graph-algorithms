@@ -1,2 +1,2 @@
-import cvxgraphalgs.algorithms.independent_set
-import cvxgraphalgs.algorithms.max_cut
+from cvxgraphalgs.algorithms.independent_set import *
+from cvxgraphalgs.algorithms.max_cut import *

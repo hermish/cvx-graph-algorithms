@@ -1,1 +1,1 @@
-import cvxgraphalgs.structures.cut
+from cvxgraphalgs.structures.cut import *

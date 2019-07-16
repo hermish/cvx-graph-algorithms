@@ -1,2 +1,2 @@
-import cvxgraphalgs.generators.stochastic_block
-import cvxgraphalgs.generators.planted_models
+from cvxgraphalgs.generators.stochastic_block import *
+from cvxgraphalgs.generators.planted_models import *
