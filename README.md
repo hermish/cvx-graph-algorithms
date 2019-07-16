@@ -31,7 +31,13 @@ independent set distribution and stochastic block model.
     2. Greedy Independent Set Algorithm
     3. Spectral Algorithm for Independent Set
 
-## Sample Usage
+## Install and Usage
+
+You can install this directly from the Python Package Index (PyPI).
+
+```
+pip install cvxgraphalgs
+```
 
 Below, we show how to run the Goemans-Williamson MAX-CUT Algorithm on a graph
 drawn from the stochastic block model distribution. For more examples, explore 

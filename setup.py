@@ -6,13 +6,23 @@ with open('README.md', 'r') as fh:
 setuptools.setup(
     name='cvxgraphalgs',
     version='0.1',
+    packages=setuptools.find_packages(),
+    install_requires=[
+        'numpy',
+        'scipy',
+        'cvxpy',
+        'networkx',
+        'itertools',
+        'random'
+    ],
+
     author='Hermish Mehta',
     author_email='hermishdm@gmail.com',
+    keywords='graph algorithms theory convex optimization',
     description='Modern convex optimization-based graph algorithms.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/hermish/cvx-graph-algorithms',
-    packages=setuptools.find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
