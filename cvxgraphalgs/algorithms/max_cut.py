@@ -2,7 +2,7 @@ import numpy as np
 import cvxpy as cp
 import networkx as nx
 
-from structures.cut import Cut
+from cvxgraphalgs.structures.cut import Cut
 
 
 def greedy_max_cut(graph):

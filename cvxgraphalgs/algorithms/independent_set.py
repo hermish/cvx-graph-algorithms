@@ -1,4 +1,3 @@
-import itertools
 import numpy as np
 import cvxpy as cp
 import networkx as nx
