@@ -1,2 +1,2 @@
-# Graph Algorithms
-Implementations of modern graph algorithms.
+# Convex Graph Algorithms
+Modern convex optimization-based graph algorithms.
