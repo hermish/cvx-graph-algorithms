@@ -31,7 +31,7 @@ independent set distribution and stochastic block model.
     2. Greedy Independent Set Algorithm
     3. Spectral Algorithm for Independent Set
 
-## Install and Usage
+## Installation and Usage
 
 You can install this directly from the Python Package Index (PyPI).
 
