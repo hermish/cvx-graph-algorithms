@@ -19,6 +19,9 @@ In this package, we provide implementations of the following algorithms. Note
 featured convex optimization-based algorithms are in bold and references are
 provided when available.
 
+This package also provides functions to generate graphs drawn from the planted
+independent set distribution and stochastic block model.
+
 1. Maximum Cut Problem
     1. **Goemans-Williamson MAX-CUT Algorithm** [1]
     2. Random MAX-CUT Algorithm
@@ -27,9 +30,6 @@ provided when available.
     1. **Crude SDP-based Independent Set** [2]
     2. Greedy Independent Set Algorithm
     3. Spectral Algorithm for Independent Set
-    
-This package also provides functions to generate graphs drawn from the planted
-independent set distribution and stochastic block model.
 
 ## Sample Usage
 
@@ -46,13 +46,12 @@ the jupyter notebooks available with the package documentation available
 >>> recovered = cvxgr.algorithms.crude_sdp_independent_set(graph)
 >>> len(recovered)
 15
-
 ```
 
 ## References
-[1] Goemans, Michel X., and David P. Williamson. "Improved approximation 
+[1]: Goemans, Michel X., and David P. Williamson. "Improved approximation 
 algorithms for maximum cut and satisfiability problems using semidefinite 
 programming." *Journal of the ACM (JACM)* 42, no. 6 (1995): 1115-1145.
 
-[2] McKenzie, Theo, Hermish Mehta, and Luca Trevisan. "A New Algorithm for the
+[2]: McKenzie, Theo, Hermish Mehta, and Luca Trevisan. "A New Algorithm for the
 Robust Semi-random Independent Set Problem." *arXiv:1808.03633* (2018).
